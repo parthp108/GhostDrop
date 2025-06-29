@@ -2,6 +2,8 @@ import { useState } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7070';
+
 export default function App() {
   const [email, setEmail] = useState('');
   const [showInbox, setShowInbox] = useState(false);
@@ -9,17 +11,44 @@ export default function App() {
   const [selectedMail, setSelectedMail] = useState(null);
 
   const generateEmail = async () => {
-    const res = await axios.get('http://localhost:7070/generate-temp-email');
-    setEmail(res.data.email);
-    setShowInbox(false);
-    setInbox([]);
+    try {
+      console.log("API Base URL:", API);
+
+      const res = await axios.get(`${API}/generate-temp-email`);
+      setEmail(res.data.email);
+      setInbox([]);
+      setShowInbox(false);
+    } catch (err) {
+      alert('❌ Failed to generate email');
+    }
+  };
+
+  const openInbox = async () => {
+    try {
+      if (!email) return;
+      const id = email.split('@')[0];
+      const res = await axios.get(`${API}/inbox/${id}`);
+      setInbox(res.data);
+      setShowInbox(true);
+    } catch (err) {
+      alert('❌ Could not fetch inbox');
+    }
+  };
+
+  const deleteInbox = async () => {
+    try {
+      const id = email.split('@')[0];
+      await axios.delete(`${API}/inbox/${id}`);
+      setInbox([]);
+    } catch (err) {
+      alert('❌ Failed to clear inbox');
+    }
   };
 
   const deleteTempEmailID = async () => {
-    if (!email) return;
-    const id = email.split('@')[0];
     try {
-      await axios.delete(`http://localhost:7070/delete-id/${id}`);
+      const id = email.split('@')[0];
+      await axios.delete(`${API}/delete-id/${id}`);
       setEmail('');
       setInbox([]);
       setShowInbox(false);
@@ -30,24 +59,10 @@ export default function App() {
     }
   };
 
-  const openInbox = async () => {
-    if (!email) return;
-    const id = email.split('@')[0];
-    const res = await axios.get(`http://localhost:7070/inbox/${id}`);
-    setInbox(res.data);
-    setShowInbox(true);
-  };
-
-  const deleteInbox = async () => {
-    const id = email.split('@')[0];
-    await axios.delete(`http://localhost:7070/inbox/${id}`);
-    setInbox([]);
-  };
-
   const deleteSingleEmail = async (index) => {
-    const id = email.split('@')[0];
     try {
-      await axios.delete(`http://localhost:7070/inbox/${id}/${index}`);
+      const id = email.split('@')[0];
+      await axios.delete(`${API}/inbox/${id}/${index}`);
       const updatedInbox = [...inbox];
       updatedInbox.splice(index, 1);
       setInbox(updatedInbox);
@@ -57,88 +72,54 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-start bg-[#0d0d0d] overflow-x-hidden text-gray-100">
-      {/* 🔳 Background pattern */}
+    <div className="relative min-h-screen w-full flex flex-col items-center justify-start bg-[#0d0d0d] text-gray-100">
       <div className="absolute inset-0 -z-10 bg-[#0d0d0d] bg-[radial-gradient(circle_at_1px_1px,#222_1px,transparent_0)] [background-size:16px_16px]" />
-
-      {/* 🔮 Gradient glow */}
       <div className="absolute top-0 w-full h-60 bg-gradient-to-r from-purple-800 via-gray-900 to-indigo-800 opacity-50 blur-2xl -z-10" />
 
-      {/* 🔱 Logo */}
-      <div className="text-center pt-12 mb-10 leading-tight z-10 font-orbitron">
-        <h1 className="text-7xl md:text-8xl font-extrabold text-white tracking-wide drop-shadow-[4px_4px_0px_#000] transition duration-300 hover:text-cyan-300 hover:drop-shadow-[0_0_20px_#00ffff]">
+      <div className="text-center pt-12 mb-10 font-orbitron">
+        <h1 className="text-7xl font-extrabold text-white hover:text-cyan-300">
           Ghost
         </h1>
-        <h2 className="text-6xl md:text-7xl font-extrabold text-red-600 tracking-wide drop-shadow-[4px_4px_0px_#000] transition duration-300 hover:text-red-400 hover:drop-shadow-[0_0_20px_#ff0000]">
+        <h2 className="text-6xl font-extrabold text-red-600 hover:text-red-400">
           Drop
         </h2>
       </div>
 
-      {/* Main Panel */}
       <main className="w-full max-w-5xl px-6 pb-16">
         <div className="bg-[#1a1a1a] border border-[#2e2e2e] rounded-2xl shadow-2xl p-8 space-y-6">
-          {/* Email Display + Buttons */}
           <div className="flex flex-wrap items-center gap-4">
             <motion.div
-              onClick={() => {
-                if (email) {
-                  navigator.clipboard.writeText(email);
-                  alert('📋 Email copied to clipboard!');
-                }
-              }}
-              className="flex-1 bg-[#2a2a2a] rounded-xl px-4 py-3 font-mono text-lg shadow-inner border border-gray-700 cursor-pointer hover:bg-[#3a3a3a] transition"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
+              onClick={() => email && navigator.clipboard.writeText(email)}
+              className="flex-1 bg-[#2a2a2a] rounded-xl px-4 py-3 font-mono text-lg shadow-inner border border-gray-700 cursor-pointer hover:bg-[#3a3a3a]"
             >
               {email || 'Your temp email will appear here...'}
             </motion.div>
 
-            <motion.button
-              onClick={generateEmail}
-              className="f95-btn bg-blue-600 hover:bg-blue-700"
-              whileHover={{ scale: 1.05 }}
-            >
+            <motion.button onClick={generateEmail} className="f95-btn bg-blue-600 hover:bg-blue-700">
               Generate
             </motion.button>
 
-            <motion.button
-              onClick={openInbox}
-              disabled={!email}
-              className="f95-btn bg-green-600 hover:bg-green-700"
-              whileHover={{ scale: 1.05 }}
-            >
+            <motion.button onClick={openInbox} disabled={!email} className="f95-btn bg-green-600 hover:bg-green-700">
               Inbox
             </motion.button>
 
-            <motion.button
-              onClick={deleteInbox}
-              disabled={!email || inbox.length === 0}
-              className="f95-btn bg-red-600 hover:bg-red-700"
-              whileHover={{ scale: 1.05 }}
-            >
+            <motion.button onClick={deleteInbox} disabled={!email || inbox.length === 0} className="f95-btn bg-red-600 hover:bg-red-700">
               Clear Inbox
             </motion.button>
 
-            <motion.button
-              onClick={deleteTempEmailID}
-              disabled={!email}
-              className="f95-btn bg-yellow-600 hover:bg-yellow-700"
-              whileHover={{ scale: 1.05 }}
-            >
+            <motion.button onClick={deleteTempEmailID} disabled={!email} className="f95-btn bg-yellow-600 hover:bg-yellow-700">
               Delete ID
             </motion.button>
           </div>
 
-          {/* Inbox Section */}
           <AnimatePresence mode="wait">
             {showInbox && (
               <motion.div
-                key="inbox-panel"
+                key="inbox"
                 className="bg-[#252525] border border-gray-700 rounded-xl p-6"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.4 }}
               >
                 {inbox.length === 0 ? (
@@ -149,23 +130,20 @@ export default function App() {
                       <motion.li
                         key={i}
                         onClick={() => setSelectedMail(mail)}
-                        className="cursor-pointer bg-[#1f1f1f] rounded-lg p-4 border border-gray-700 hover:border-gray-500 transition relative"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: i * 0.1 }}
+                        className="bg-[#1f1f1f] border border-gray-700 p-4 rounded-lg relative cursor-pointer hover:border-gray-500"
                       >
                         <div className="font-semibold text-lg">{mail.subject || 'No Subject'}</div>
-                        <div className="text-sm text-gray-300 mt-1 truncate">{mail.body}</div>
+                        <div className="text-sm text-gray-300 truncate">{mail.body}</div>
                         <div className="text-xs text-gray-500 mt-2">From: {mail.from}</div>
 
                         <button
                           onClick={(e) => {
-                            e.stopPropagation(); // prevent modal from opening
+                            e.stopPropagation();
                             deleteSingleEmail(i);
                           }}
                           className="absolute top-2 right-3 text-red-500 text-sm hover:underline"
                         >
-                          🗑️ Delete
+                          🗑️
                         </button>
                       </motion.li>
                     ))}
@@ -177,7 +155,6 @@ export default function App() {
         </div>
       </main>
 
-      {/* 🧾 Modal for Selected Mail */}
       {selectedMail && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
           <div className="bg-[#1f1f1f] border border-gray-600 p-6 rounded-xl max-w-xl w-full space-y-4 relative">
