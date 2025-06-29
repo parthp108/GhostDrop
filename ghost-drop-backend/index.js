@@ -99,5 +99,22 @@ app.delete('/inbox/:id/:mailIndex', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete email' });
   }
 });
+//  fake mail to a temp inbox
+app.post('/inbox/:id', async (req, res) => {
+  const { id } = req.params;
+  const { subject, body, from } = req.body;
+
+  const emailDoc = await Email.findOne({ id });
+
+  if (!emailDoc) {
+    return res.status(404).json({ error: 'Email ID not found' });
+  }
+
+  const newMail = { subject, body, from };
+  emailDoc.inbox.push(newMail);
+  await emailDoc.save();
+
+  res.status(200).json({ message: 'Fake email added successfully' });
+});
 
 

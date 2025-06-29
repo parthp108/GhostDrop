@@ -1,5 +1,5 @@
 {
-  "name": "temp-mail",
+  "name": "ghost-drop",
   "version": "1.0.0",
   "description": "A lightweight Express + MongoDB backend for generating and managing temporary email addresses.",
   "main": "db.js",
@@ -119,7 +119,7 @@
     "concurrently": "^9.2.0"
   },
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix temp-mail-frontend\" \"npm run dev --prefix temp-mail-backend\""
+    "dev": "concurrently \"npm run dev --prefix ghost-drop-frontend\" \"npm run dev --prefix ghost-drop-backend\""
   },
   "keywords": [],
   "author": "",

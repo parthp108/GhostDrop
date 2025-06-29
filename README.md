@@ -1,4 +1,4 @@
-# 📬 Temp Mail API
+# 📬 Ghost Drop API
 
 A lightweight Express + MongoDB backend for generating and managing temporary email addresses.
 
