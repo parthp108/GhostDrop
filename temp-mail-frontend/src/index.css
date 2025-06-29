@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom button styles */
+.btn-blue {
+  @apply bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium;
+}
+.btn-gray {
+  @apply bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg font-medium;
+}
+.btn-red {
+  @apply bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg font-medium;
+}
+.f95-btn {
+  @apply text-white px-4 py-2 rounded-lg text-base font-semibold transition duration-200 disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+/* 🔧 Fix white background issue */
+html, body {
+  @apply bg-[#0d0d0d] text-gray-100 min-h-screen;
+}
