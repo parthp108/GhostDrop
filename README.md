@@ -4,7 +4,7 @@
 
 Built with **Express + MongoDB** on the backend and **React + Tailwind CSS** on the frontend.
 
-> 🌐 Live App: [https://ghostdrop.onrender.com](https://ghostdrop.onrender.com)  
+> 🌐 Live App: [https://ghostdrop.onrender.com](https://ghost-drop-gamma.vercel.app/)  
 > 👨‍💻 Built by: [@parthp108](https://github.com/parthp108)
 
 ---
