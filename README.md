@@ -1,59 +1,129 @@
-# 👻 Ghost Drop – Temporary Email Service
+# 📬 GhostDrop – Temporary Email API
 
-A sleek full-stack temporary email service inspired by F95-style UI. Generate disposable email IDs, receive messages, manage inbox, and more.
+**GhostDrop** is a full-stack web app that allows users to generate temporary email addresses, receive simulated messages, and manage a disposable inbox with ease.  
 
----
+Built with **Express + MongoDB** on the backend and **React + Tailwind CSS** on the frontend.
 
-## 🔥 Features
-
-- 🆕 Generate temporary email addresses instantly  
-- 📥 Simulate receiving emails to inbox  
-- 📨 View inbox with modern UI  
-- 🗑️ Clear inbox  
-- ❌ Delete entire email ID  
-- 🔐 TTL (Time-to-live) and MongoDB-backed persistence  
-- 🎨 Stylish dark theme UI with animated transitions  
-- 📋 One-click copy email ID  
-- 💌 Modal view for individual email preview
+> 🌐 Live App: [https://ghostdrop.onrender.com](https://ghostdrop.onrender.com)  
+> 👨‍💻 Built by: [@parthp108](https://github.com/parthp108)
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Features
 
-### Backend
-- **Node.js** + **Express**
-- **MongoDB** + **Mongoose**
-- **dotenv** for config
-- **CORS** and **nodemon**
-
-### Frontend
-- **React.js** + **Vite**
-- **Tailwind CSS** + custom utility classes
-- **Framer Motion** for animations
+- 🔹 Generate UUID-based temporary email IDs  
+- 📨 Simulate receiving emails  
+- 🗑️ Delete individual emails  
+- 🧹 Clear entire inbox  
+- ❌ Delete the full temporary email ID  
+- 💻 Beautiful modern dark UI with Tailwind + Framer Motion  
 
 ---
 
-## 🧪 API Endpoints (Backend)
+## 🧰 Tech Stack
 
-| Method | Endpoint                     | Description                      |
-|--------|------------------------------|----------------------------------|
-| GET    | `/generate-temp-email`       | Generate a new temp email        |
-| GET    | `/inbox/:id`                 | Fetch inbox for email ID         |
-| DELETE | `/inbox/:id`                 | Clear inbox for email ID         |
-| DELETE | `/email/:id`                 | Delete the entire email ID       |
-| POST   | `/inbox/:id`                 | Add mail (for simulation/dev)    |
-| DELETE | `/delete-id/:id`             | (Legacy) Delete email + inbox    |
+### 🖥️ Frontend
+- React (Vite)
+- Tailwind CSS
+- Framer Motion
+- Axios
+
+### 🛠️ Backend
+- Node.js + Express.js
+- MongoDB (with Mongoose)
+- UUID
+- CORS
 
 ---
 
-### 📥 Add Mail (Dev Testing)
+## 📡 API Endpoints
 
-```http
+> **Base URL**: `https://ghostdrop.onrender.com`
+
+### ➕ Generate Temp Email
+```
+GET /generate-temp-email
+```
+
+### 📥 Get Inbox
+```
+GET /inbox/:id
+```
+
+### 📨 Add Email (Simulate)
+```
 POST /inbox/:id
-Content-Type: application/json
+```
 
+**Body Example:**
+```json
 {
-  "from": "someone@example.com",
-  "subject": "Hello there!",
-  "body": "Just testing the Ghost Drop inbox."
+  "from": "sender@example.com",
+  "subject": "Hello Ghost",
+  "body": "This is a test message."
 }
+```
+
+### 🧹 Clear Inbox
+```
+DELETE /inbox/:id
+```
+
+### ❌ Delete One Mail
+```
+DELETE /inbox/:id/:index
+```
+
+### 🔥 Delete Temp Email ID
+```
+DELETE /delete-id/:id
+```
+
+---
+
+## 🖥️ Running Locally
+
+### 🔧 Backend Setup
+```bash
+cd ghost-drop-backend
+npm install
+
+# Create .env file
+touch .env
+```
+
+**Add this in `.env`:**
+```
+MONGO_URI=your_mongodb_connection_string
+```
+
+```bash
+npm run dev
+```
+
+---
+
+### 🎨 Frontend Setup
+```bash
+cd ghost-drop-frontend
+npm install
+
+# Create .env file
+touch .env
+```
+
+**Add this in `.env`:**
+```
+VITE_API_BASE_URL=http://localhost:7070
+```
+
+```bash
+npm run dev
+```
+
+---
+
+## 📜 License
+
+MIT © 2025 [Parth Patel](https://github.com/parthp108)
+
